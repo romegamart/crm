@@ -1,0 +1,131 @@
+{% extends 'index.html' %}
+{% load static %}
+{%block body%}
+
+
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="card">
+                        <div class="card-body">
+                            <h4 class="card-title mb-4 text-center border p-2">Total Employee<span><a href="/admin-add-employee"> &nbsp;<i class="fa fa-plus" aria-hidden="true"></i></a>
+                            </span></h4>
+                            <div class="table-responsive ">
+                                <table class="table align-middle table-nowrap mb-0" id="productTable">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th class="align-middle">Name</th>
+                                            <th class="align-middle">Email</th>
+                                            <th class="align-middle">Phone</th>
+                                            <th class="align-middle">Password</th>
+                                            <th class="align-middle">Address</th>
+                                            <th class="align-middle">Status</th>
+                                            <th class="align-middle">Report</th>
+                                            <th>Edit</th>
+                                            <th>Delete</th>
+                                            <th>Date</th>
+                                            
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {%for item in page_posts%}
+                                        <tr>    
+                                            <td>
+                                                {{item.name}}
+                                            </td>
+                                            <td>
+                                                {{item.email}}
+                                            </td>
+                                           <td>
+                                                {{item.phone}}
+                                            </td>
+                                           <td>
+                                                {{item.password}}
+                                            </td>
+                                           <td title="{{item.address}}">
+                                                {{item.address|slice:"30"}}...
+                                            </td>
+                                           
+                                            <td>
+                                                <div class="dropdown">
+                                                    {%if item.empstatus == "active"%}
+                                                    <button class="btn btn-success btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                                      {{item.empstatus}}
+                                                    </button>
+                                                    {%else%}
+                                                    <button class="btn btn-danger btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                                        {{item.empstatus}}
+                                                      </button>
+                                                    {%endif%}
+                                                    <ul class="dropdown-menu">
+                                                      <li><a class="dropdown-item" href="/admin-update-employee-status/{{item.id}}/active">Active</a></li>
+                                                      <li><a class="dropdown-item" href="/admin-update-employee-status/{{item.id}}/deactive">Deactive</a></li>
+                                                     
+                                                    </ul>
+                                                  </div>
+                                            </td>
+                                            <td>
+                                                <a href="/employee-report/{{item.phone}}/all" class="btn btn-primary btn-sm">View</a>
+                                            </td>
+                                            <td>
+                                                <a href="/admin-update-employee/{{item.id}}"><i class="fa fa-edit"></i></a>
+                                            </td>
+                                            <td>
+                                                <a href="#" onclick="confirmDelete('{{item.id}}')">
+                                                    <i class="fa fa-trash text-danger"></i>
+                                                </a>
+                                            </td>
+                                            
+                                            <script>
+                                                function confirmDelete(itemId) {
+                                                    if (confirm("Are you sure you want to delete this item?")) {
+                                                        window.location.href = "/admin-delete-employee/" + itemId;
+                                                    } else {
+                                                        return false;
+                                                    }
+                                                }
+                                            </script>
+                                            <td>
+                                                {{item.date}}
+                                            </td>
+                                            
+                                        </tr>
+                                        {%endfor%}
+                                        
+                                    </tbody>
+                                </table>
+                            </div>
+                            <!-- end table-responsive -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- end row -->
+        </div>
+        <!-- container-fluid -->
+    </div>
+
+    <!-- End Page-content -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const searchInput = document.getElementById('searchInput');
+            const tableRows = document.querySelectorAll('#productTable tbody tr');
+    
+            searchInput.addEventListener('input', function() {
+                const searchTerm = searchInput.value.trim().toLowerCase();
+    
+                tableRows.forEach(row => {
+                    const nameColumn = row.querySelector('td:first-child');
+                    if (nameColumn) {
+                        const textContent = nameColumn.textContent.trim().toLowerCase();
+                        if (textContent.includes(searchTerm)) {
+                            row.style.display = '';
+                        } else {
+                            row.style.display = 'none';
+                        }
+                    }
+                });
+            });
+        });
+    </script>
+
+    {%endblock%}

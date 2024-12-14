@@ -1,0 +1,153 @@
+{%extends 'index.html'%}
+{%load static%}
+{%block body%}
+
+<!-- ============================================================== -->
+<div class="main-contentw-100">
+    <div class="">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-xl-12">
+                    <div class="card">
+                        <div class="card-body">
+                        {%if msg%}
+                        <script>
+                            alert("Client Update successfully...")
+                        </script>
+                        {%endif%}
+                            <h4 class=" text-center border p-1 bg-primary text-light">Update Client</h4>
+                            <form method="post" enctype="multipart/form-data" >
+                                {%csrf_token%}
+                                <div class="row">
+                                    <div class="col-lg-3 col-12">
+                                        <div class="mb-3">
+                                            <label class="form-label">Name</label>
+                                            <input type="text" class="form-control" placeholder="Enter Name" name="client_name" value="{{data.client_name}}">
+                                        </div>
+                                    </div>
+
+
+                                    <div class="col-lg-3 col-12">
+                                        <div class="mb-3">
+                                            <label class="form-label">Email</label>
+                                            <input type="text" class="form-control" placeholder="Enter Email" name="client_email" value="{{data.client_email}}">
+                                        </div>
+                                    </div>
+
+                                    <div class="col-lg-3 col-12">
+                                        <div class="mb-3">
+                                            <label class="form-label">Phone</label>
+                                            <input type="number" id="phone-code" class="form-control bg-light" placeholder="Enter Phone" name="client_phone" value="{{data.client_phone}}" readonly>
+                                        </div>
+                                    </div>
+                                    
+                                    
+                                    
+                                    <div class="col-lg-3 col-12">
+                                        <div class="mb-3">
+                                            <label class="form-label">Address</label>
+                                            <input type="text" class="form-control" placeholder="Enter Address" name="client_address" value="{{data.client_address}}">
+                                        </div>
+                                    </div>
+                                    <h6 class=" p-1 text-center" style="border:1px solid rgb(239, 210, 132);">YOUR UPDATE</h6>
+                                    <div class="col-lg-3 col-12">
+                                        <div class="mb-3">
+                                            <label class="form-label">Status</label>
+                                            <select name="client_status" class="form-control" id="clientStatus" required>
+                                                <option value="" selected disabled>Select Status</option>
+                                                <option value="pending" {% if data.client_status == "pending" %} selected {% endif %}>Pending</option>
+                                                <option value="followup" {% if data.client_status == "followup" %} selected {% endif %}>Follow Up</option>
+                                                <option value="cnp" {% if data.client_status == "cnp" %} selected {% endif %}>Call Not Picked</option>
+                                                <option value="completed" {% if data.client_status == "completed" %} selected {% endif %}>Completed</option>
+                                                <option value="completed" {% if data.client_status == "not-interested" %} selected {% endif %}>Not Interested</option>
+                                                <option value="completed" {% if data.client_status == "not-in-industry" %} selected {% endif %}>Not in Industry</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="col-lg-3 col-12" id="followupDateDiv" style="display: none;">
+                                        <div class="mb-3">
+                                            <label class="form-label">Next followup Date</label>
+                                            <input type="datetime-local" class="form-control" name="client_next_followup_date" id="followupDate">
+                                        </div>
+                                    </div>
+                                    
+                                    <script>
+                                        document.getElementById('clientStatus').addEventListener('change', function() {
+                                            var followupDateDiv = document.getElementById('followupDateDiv');
+                                            var followupDateInput = document.getElementById('followupDate');
+                                            
+                                            if (this.value === 'followup') {
+                                                followupDateDiv.style.display = 'block';  // Show the date field if "Follow Up" is selected
+                                                followupDateInput.setAttribute('required', 'required');  // Make the date input required
+                                            } else {
+                                                followupDateDiv.style.display = 'none';  // Hide the date field for other options
+                                                followupDateInput.removeAttribute('required');  // Remove the required attribute
+                                            }
+                                        });
+                                    
+                                        // Optionally, run this script on page load to handle preselected values
+                                        window.addEventListener('load', function() {
+                                            var clientStatus = document.getElementById('clientStatus').value;
+                                            var followupDateDiv = document.getElementById('followupDateDiv');
+                                            var followupDateInput = document.getElementById('followupDate');
+                                            
+                                            if (clientStatus === 'followup') {
+                                                followupDateDiv.style.display = 'block';
+                                                followupDateInput.setAttribute('required', 'required');
+                                            } else {
+                                                followupDateDiv.style.display = 'none';
+                                                followupDateInput.removeAttribute('required');
+                                            }
+                                        });
+                                    </script>
+                                    
+                                    
+                                    <div class="col-lg-6 col-12">
+                                        <div class="mb-3">
+                                            <label class="form-label">Message</label>
+                                            <textarea class="form-control" placeholder="Enter Call Description" name="client_message" required></textarea>
+                                        </div>
+                                    </div>
+
+                                    <div class="text-center">
+                                        <button type="submit" class="btn btn-primary text-center mt-4"
+                                            style="padding:2px 50px;">Update</submit>
+                                    </div>
+                            </form>
+                            <h4 class="border p-1 text-center text-light bg-success mt-3">UPDATE HISTORY</h4>
+                            <div class="col-lg-3 col-12 "style="border:1px solid rgb(239, 210, 132);">
+                                <div class="m-2 text-center text-primary">
+                                    Next Follow Up Date
+                                </div>
+                            </div>
+                            
+                            <div class="col-lg-9 col-12 "style="border:1px solid rgb(239, 210, 132);">
+                                <div class="m-2 text-center text-primary">
+                                    Description
+                                </div>
+                            </div>
+
+                            {%for item in chistory%}
+                                    <div class="col-lg-3 col-12 "style="border:1px solid rgb(239, 210, 132);">
+                                        <div class="mb-3">
+                                            {{item.client_next_followup_date}}
+                                        </div>
+                                    </div>
+
+                                    <div class="col-lg-9 col-12 "style="border:1px solid rgb(239, 210, 132);">
+                                        <div class="mb-3">
+                                            {{item.client_message}}
+                                        </div>
+                                    </div>
+                                    {%endfor%}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                <!-- end row -->
+        </div>
+    </div>
+    <!-- End Page-content -->
+
+    {%endblock%}

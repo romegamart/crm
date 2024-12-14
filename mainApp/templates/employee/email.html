@@ -1,0 +1,146 @@
+{%extends 'employee/index.html'%}
+{%load static%}
+{%block body%}
+
+<!-- ============================================================== -->
+
+<div class="row">
+    <div class="col-lg-12">
+        <div class="card">
+            <div class="card-body">
+
+                <h4 class="card-title mb-4 text-center">YOUR EMAIL <span>
+                    
+                    <a href="/employee-add-email/" class="btn-sm btn btn-primary">Add Bulk Email <i class="fa fa-plus" aria-hidden="true"></i></a></span>
+                </h4>
+                <!-- Assign Button -->
+                <div id="assignButton" style="display:none; margin-top: 15px;margin-bottom:10px">
+                    <button type="button" class="btn btn-primary btn-sm" onclick="showEmployeeModal()">Assign to
+                        Employee</button>
+                </div>
+                {% if page_posts %}
+
+                <div class="table-responsive">
+                    <table class="table align-middle table-nowrap mb-0" id="productTable">
+                        <thead class="table-light">
+                            <tr>
+                                <th class="align-middle">Email</th>
+                                <th class="align-middle">Name</th>
+                                <th class="align-middle">Uploaded On</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in page_posts %}
+                            <tr>    
+                                <td>{{ item.email }}</td>
+                                <td>{{ item.name }}</td>
+                                <td>{{ item.date|slice:"19" }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+
+
+                <!-- Employee Selection Modal (Bootstrap) -->
+                <div class="modal fade" id="employeeModal" tabindex="-1" aria-labelledby="employeeModalLabel"
+                    aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="employeeModalLabel">Select Employee</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                    aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="form-group">
+                                    <label for="employee">Select Employee</label>
+                                    <select name="selected_employee" id="employee" class="form-control" required>
+                                        <option value="">-- Select Employee --</option>
+                                        {% for emps in employee %}
+                                        <option value="{{ emps.phone }}">{{ emps.name }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+
+
+                {% else %}
+                <div class="text-center border p-4">
+                    <img loading="lazy" src="{% static 'admin-assets/images/not-found.png' %}" alt="Image"><br>
+                    <h3>Sorry, no results found!</h3>
+                    <p>Please check the spelling or try searching for something else</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    {%if page_posts%}
+    <div class="blog-pagination">
+        <nav>
+            <ul class="pagination">
+                <li class="page-item previtem {% if not page_posts.has_previous %}disabled{% endif %}">
+                    <a class="page-link"
+                        href="{% if page_posts.has_previous %}?page={{ page_posts.previous_page_number }}&name={{ search_query }}{% endif %}">
+                        <i class="fas fa-regular fa-arrow-left"></i> Prev
+                    </a>
+                </li>
+                <li class="justify-content-center pagination-center">
+                    <div class="pagelink">
+                        <ul class="d-flex">
+                            {% for page_num in page_range %}
+                            <li class="page-item {% if page_posts.number == page_num %}active{% endif %}">
+                                <a class="page-link" href="?page={{ page_num }}&name={{ search_query }}">
+                                    {{ page_num }}
+                                    {% if page_posts.number == page_num %}
+                                    <span class="visually-hidden">(current)</span>
+                                    {% endif %}
+                                </a>
+                            </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </li>
+                <li class="page-item nextlink {% if not page_posts.has_next %}disabled{% endif %}">
+                    <a class="page-link"
+                        href="{% if page_posts.has_next %}?page={{ page_posts.next_page_number }}&name={{ search_query }}{% endif %}">
+                        Next <i class="fas fa-regular fa-arrow-right"></i>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+
+    {%endif%}
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const searchInput = document.getElementById('searchInput');
+            const tableRows = document.querySelectorAll('#productTable tbody tr');
+
+            searchInput.addEventListener('input', function () {
+                const searchTerm = searchInput.value.trim().toLowerCase();
+
+                tableRows.forEach(row => {
+                    const nameColumn = row.querySelector('td:nth-child(2)');
+                    if (nameColumn) {
+                        const textContent = nameColumn.textContent.trim().toLowerCase();
+                        if (textContent.includes(searchTerm)) {
+                            row.style.display = '';
+                        } else {
+                            row.style.display = 'none';
+                        }
+                    }
+                });
+            });
+        });
+    </script>
+</div>
+
+{%endblock%}

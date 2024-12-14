@@ -1,0 +1,63 @@
+{% extends 'employee/index.html' %}
+{% load static %}
+{% block body %}
+
+<div class="main-content w-100 m-auto">
+    <div class="">
+        <div class="container-fluid ">
+            <div class="row ">
+                <div class="col-xl-12 col-12">
+                    <div class="card">
+                        <div class="card-body">
+                            
+                            <h4 class="text-center border p-1 bg-primary text-light">Add Bulk Email</h4>
+                            <form method="post" enctype="multipart/form-data" onsubmit="return validateForm();">
+                                {% csrf_token %}
+                                <div class="row">
+                                    
+                                    <div class="col-lg-4 col-12 m-auto">
+                                        <div class="mb-3">
+                                            <label class="form-label">Excel</label>
+                                            <input type="file" class="form-control" name="file" required>
+                                        </div>
+                                    </div>
+
+                                    <div class="text-center">
+                                        <button type="submit" class="btn btn-primary text-center mt-4"
+                                            style="padding:2px 50px;">Add</button>
+                                    </div>
+                                </div>
+                            </form>
+                            <div class="row border mt-2">
+                            <div class="col-lg-6 col-12 border">
+                            <!-- Display the report for duplicate and invalid numbers -->
+                            {% if duplicate_email %}
+                                <h5 class="text-danger mt-4">Duplicate Phone Numbers:</h5>
+                                <ul class="text-danger">
+                                    {% for item in duplicate_email %}
+                                        <li>Row {{ item.row }}: {{ item.email }}</li>
+                                    {% endfor %}
+                                </ul>
+                            {% endif %}
+                            </div>
+                            <div class="col-lg-6 col-12 border">
+                            {% if invalid_email %}
+                                <h5 class="text-warning mt-4">Invalid Phone Numbers:</h5>
+                                <ul class="text-warning">
+                                    {% for item in invalid_email %}
+                                        <li>Row {{ item.row }}: {{ item.email }}</li>
+                                    {% endfor %}
+                                </ul>
+                            {% endif %}
+                            </div>
+                        </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- end row -->
+        </div>
+    </div>
+    <!-- End Page-content -->
+
+{% endblock %}
